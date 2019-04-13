@@ -17,7 +17,7 @@ RUN sudo pacman --noconfirm --needed -S rust
 #RUN pacman --noconfirm -S ttf-font-awesome ttf-ubuntu-font-family ttf-dejavu ttf-liberation noto-fonts noto-fonts-emoji noto-fonts-extra
 
 RUN sudo pacman --noconfirm --needed -S docker
-RUN usermod -aG docker shane
+RUN sudo usermod -aG docker shane
 
 #RUN yay --noconfirm -S google-chrome
 RUN yay --noconfirm --needed -S google-cloud-sdk && rm -rf .cache
