@@ -8,17 +8,21 @@ RUN echo "shane ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/shane
 WORKDIR /home/shane
 USER shane
 
-RUN git clone https://aur.archlinux.org/yay.git && cd yay && makepkg --noconfirm --needed -sir && cd .. && rm -rf yay
-#RUN yay --noconfirm -S yay
+RUN sudo pacman --noconfirm --needed -S go
+RUN git clone https://aur.archlinux.org/yay.git && cd yay && makepkg --noconfirm --needed -sir && cd .. && rm -rf yay .cache
 
-RUN sudo pacman --noconfirm --needed -S grub parted hwinfo time htop zsh vim tmux openssh the_silver_searcher docker binutils zsh python3 man termite-terminfo bind-tools
-
+RUN sudo pacman --noconfirm --needed -S grub parted hwinfo time htop zsh vim tmux openssh the_silver_searcher binutils zsh python3 man termite-terminfo bind-tools
+RUN sudo pacman --noconfirm --needed -S rust
 #RUN pacman --noconfirm -S xorg-xev rxvt-unicode termite dmenu i3status code qpdfview
 #RUN pacman --noconfirm -S ttf-font-awesome ttf-ubuntu-font-family ttf-dejavu ttf-liberation noto-fonts noto-fonts-emoji noto-fonts-extra
 
+RUN sudo pacman --noconfirm --needed -S docker
+RUN usermod -aG docker shane
+
 #RUN yay --noconfirm -S google-chrome
-#RUN yay --noconfirm -S google-cloud-sdk
-RUN yay --noconfirm --needed -S gotop-bin
+RUN yay --noconfirm --needed -S google-cloud-sdk && rm -rf .cache
+RUN yay --noconfirm --needed -S gotop-bin && rm -rf .cache
+RUN yay --noconfirm --needed -S dive && rm -rf .cache
 #RUN yay --noconfirm -S i3-gaps
 #RUN yay --noconfirm -S spotify
 
