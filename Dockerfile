@@ -37,9 +37,8 @@ RUN zsh -c 'git clone --recursive https://github.com/sorin-ionescu/prezto.git "$
 	for rcfile in "${ZDOTDIR:-$HOME}"/.zprezto/runcoms/^README.md(.N); do \
 	  ln -s "$rcfile" "${ZDOTDIR:-$HOME}/.${rcfile:t}" && \
 	done && \
-	rm .zpreztorc'
-
-COPY zpreztorc .zpreztorc
+	ln -fs $HOME/.shanegibbs-dots/zshrc .zshrc && \
+	ln -fs $HOME/.shanegibbs-dots/zpreztorc .zpreztorc'
 
 RUN curl -L https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 >dumb-init && chmod +x dumb-init && sudo mv dumb-init /usr/local/bin
 
