@@ -28,6 +28,8 @@ RUN userdel -rf yay && rm /etc/sudoers.d/yay
 #RUN yay --noconfirm -S i3-gaps
 #RUN yay --noconfirm -S spotify
 
+COPY ssh_config /etc/ssh/ssh_config
+
 RUN useradd -m -s /usr/sbin/zsh -U -G users,audio,input,kvm,optical,storage,video,systemd-journal shane
 RUN echo "shane ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/shane
 WORKDIR /home/shane
@@ -36,8 +38,6 @@ RUN sudo usermod -aG docker shane
 
 COPY dots /home/shane/.shanegibbs-dots
 RUN sudo chown shane:shane -R .shanegibbs-dots && ./.shanegibbs-dots/setup.sh
-RUN sed -ie 's/^colorscheme/silent! colorscheme/g' .vimrc
-#RUN vim +PluginInstall +qall
 
 RUN zsh -c 'git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto" && \
 	setopt EXTENDED_GLOB && \
