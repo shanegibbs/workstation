@@ -1,14 +1,18 @@
 FROM archlinux/base
 
+RUN sed -i 's/#Color/Color/' /etc/pacman.conf
 RUN pacman --noconfirm -Sy
 RUN pacman --noconfirm --needed -S base-devel sudo git
 
-RUN sudo pacman --noconfirm --needed -S grub parted hwinfo time htop zsh vim tmux openssh the_silver_searcher binutils zsh python3 man termite-terminfo bind-tools
+RUN sudo pacman --noconfirm --needed -S grub parted hwinfo time htop zsh vim \
+	tmux openssh the_silver_searcher binutils zsh python3 python-virtualenv man \
+	termite-terminfo bind-tools jq rsync packer inetutils iputils
 RUN sudo pacman --noconfirm --needed -S rust
 RUN sudo pacman --noconfirm --needed -S go
 RUN sudo pacman --noconfirm --needed -S docker
 RUN sudo pacman --noconfirm --needed -S aws-cli
 RUN sudo pacman --noconfirm --needed -S kubectl
+RUN sudo pacman --noconfirm --needed -S terraform
 
 RUN useradd -U -m yay
 RUN echo "yay ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/yay
@@ -18,6 +22,7 @@ WORKDIR /home/yay
 RUN git clone https://aur.archlinux.org/yay.git && cd yay && makepkg --noconfirm --needed -sir && cd .. && rm -rf yay .cache
 RUN yay --noconfirm --needed -S google-cloud-sdk && rm -rf .cache
 RUN yay --noconfirm --needed -S gotop-bin && rm -rf .cache
+RUN yay --noconfirm --needed -S kubernetes-helm && rm -rf .cache
 RUN yay --noconfirm --needed -S dive && rm -rf .cache
 USER root
 RUN userdel -rf yay && rm /etc/sudoers.d/yay
@@ -30,14 +35,13 @@ RUN userdel -rf yay && rm /etc/sudoers.d/yay
 
 COPY ssh_config /etc/ssh/ssh_config
 
-RUN useradd -m -s /usr/sbin/zsh -U -G users,audio,input,kvm,optical,storage,video,systemd-journal shane
-RUN echo "shane ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/shane
-WORKDIR /home/shane
-USER shane
-RUN sudo usermod -aG docker shane
+RUN useradd -m -s /usr/sbin/zsh -U -G users,audio,input,kvm,optical,storage,video,systemd-journal sgibbs
+RUN echo "sgibbs ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/user
+WORKDIR /home/sgibbs
+USER sgibbs
 
-COPY dots /home/shane/.shanegibbs-dots
-RUN sudo chown shane:shane -R .shanegibbs-dots && ./.shanegibbs-dots/setup.sh
+COPY dots /home/sgibbs/.shanegibbs-dots
+RUN sudo chown sgibbs:sgibbs -R .shanegibbs-dots && ./.shanegibbs-dots/setup.sh
 
 RUN zsh -c 'git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto" && \
 	setopt EXTENDED_GLOB && \
@@ -47,6 +51,8 @@ RUN zsh -c 'git clone --recursive https://github.com/sorin-ionescu/prezto.git "$
 	ln -fs $HOME/.shanegibbs-dots/zshrc .zshrc && \
 	ln -fs $HOME/.shanegibbs-dots/zpreztorc .zpreztorc'
 
-RUN curl -L https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 >dumb-init && chmod +x dumb-init && sudo mv dumb-init /usr/local/bin
+USER root
+RUN curl -L https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 >dumb-init && chmod +x dumb-init && mv dumb-init /usr/local/bin
 ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
-CMD ["bash", "-c", "/usr/sbin/tmux new -t workstation -s workstation -d && tail -f /dev/null"]
+COPY entry.sh /
+CMD /entry.sh
