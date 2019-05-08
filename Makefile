@@ -1,9 +1,15 @@
+USER=$(shell whoami)
+
 build:
 	docker build $(BUILD_ARGS) -t workstation .
 
+build-no-cache:
+	$(MAKE) build BUILD_ARGS=--no-cache
+
 run:
-	docker run --name workstation --rm -it --net=host  \
+	docker run --name workstation --rm --net=host --pid=host --privileged \
 		-v /var/run/docker.sock:/var/run/docker.sock \
+		-v $(HOME)/projects:/workstation/projects \
 		-v $(HOME)/workstation:/workstation \
 		workstation
 

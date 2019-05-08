@@ -7,7 +7,7 @@ RUN pacman --noconfirm --needed -S base-devel sudo git
 RUN sudo pacman --noconfirm --needed -S glibc grub parted hwinfo time htop zsh vim \
 	tmux openssh the_silver_searcher binutils zsh python3 python-virtualenv man \
 	termite-terminfo bind-tools jq rsync packer inetutils iputils openbsd-netcat \
-	net-tools cdrtools
+	net-tools cdrtools rxvt-unicode-terminfo
 RUN sudo pacman --noconfirm --needed -S rust
 RUN sudo pacman --noconfirm --needed -S go
 RUN sudo pacman --noconfirm --needed -S docker
@@ -23,10 +23,11 @@ WORKDIR /home/yay
 RUN git clone https://aur.archlinux.org/yay.git && cd yay && makepkg --noconfirm --needed -sir && cd .. && rm -rf yay .cache
 RUN yay --noconfirm --needed -S google-cloud-sdk && rm -rf .cache
 RUN yay --noconfirm --needed -S gotop-bin && rm -rf .cache
-RUN yay --noconfirm --needed -S kubernetes-helm && rm -rf .cache
-RUN yay --noconfirm --needed -S dive && rm -rf .cache
+#RUN yay --noconfirm --needed -S dive && rm -rf .cache
 USER root
 RUN userdel -rf yay && rm /etc/sudoers.d/yay && rm -rf /home/yay
+
+RUN cd /usr/local/bin && curl -L "$(curl -s https://api.github.com/repos/helm/helm/releases/latest |jq -r .body |egrep -o "https:[^)]+linux-arm64.tar.gz" |head -n 1)" |tar -xz
 
 #RUN pacman --noconfirm -S xorg-xev rxvt-unicode termite dmenu i3status code qpdfview
 #RUN pacman --noconfirm -S ttf-font-awesome ttf-ubuntu-font-family ttf-dejavu ttf-liberation noto-fonts noto-fonts-emoji noto-fonts-extra
@@ -53,6 +54,16 @@ RUN zsh -c 'git clone --recursive https://github.com/sorin-ionescu/prezto.git "/
 	ln -fs .shanegibbs-dots/zpreztorc /etc/skel/.zpreztorc'
 
 RUN ln -s .shanegibbs-dots/tmux.conf /etc/skel/.tmux.conf
+RUN ln -s .shanegibbs-dots/vimrc /etc/skel/.vimrc
+RUN ln -s .shanegibbs-dots/vim /etc/skel/.vim
+
+RUN ln -s /workstation/ssh /etc/skel/.ssh
+RUN ln -s /workstation/aws /etc/skel/.aws
+RUN ln -s /workstation/config /etc/skel/.config
+RUN ln -s /workstation/kube /etc/skel/.kube
+RUN ln -s /workstation/gnupg /etc/skel/.gnupg
+
+RUN ln -s /workstation/projects /etc/skel/projects
 
 #USER root
 RUN curl -L https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 >dumb-init && chmod +x dumb-init && mv dumb-init /usr/local/bin
