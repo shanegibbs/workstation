@@ -7,10 +7,10 @@ RUN pacman --noconfirm --needed -S base-devel sudo git
 RUN sudo pacman --noconfirm --needed -S glibc grub parted hwinfo time htop zsh vim \
 	tmux openssh the_silver_searcher binutils zsh python3 python-virtualenv man \
 	termite-terminfo bind-tools jq rsync packer inetutils iputils openbsd-netcat \
-	net-tools cdrtools rxvt-unicode-terminfo
+	net-tools cdrtools rxvt-unicode-terminfo psmisc
 RUN sudo pacman --noconfirm --needed -S rust
 RUN sudo pacman --noconfirm --needed -S go
-RUN sudo pacman --noconfirm --needed -S docker
+RUN sudo pacman --noconfirm --needed -S docker docker-compose
 RUN sudo pacman --noconfirm --needed -S aws-cli
 RUN sudo pacman --noconfirm --needed -S kubectl
 RUN sudo pacman --noconfirm --needed -S terraform
