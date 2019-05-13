@@ -27,6 +27,15 @@ do
 	chown "$NEW_UID:$NEW_GID" "$P"
 done
 
+for d in dev local
+do
+	source_dir="/workstation/$d"
+	if [ -e "$source_dir" ]
+	then
+		ln -s "$source_dir" "/home/$NEW_USERNAME/$d"
+	fi
+done
+
 sudo -u "$NEW_USERNAME" tmux -S /workstation/tmux.socket new -t workstation -s workstation -d
 
 echo tmux running

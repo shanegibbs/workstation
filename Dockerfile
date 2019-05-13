@@ -56,6 +56,8 @@ RUN zsh -c 'git clone --recursive https://github.com/sorin-ionescu/prezto.git "/
 RUN ln -s .shanegibbs-dots/tmux.conf /etc/skel/.tmux.conf
 RUN ln -s .shanegibbs-dots/vimrc /etc/skel/.vimrc
 RUN ln -s .shanegibbs-dots/vim /etc/skel/.vim
+RUN ln -s .shanegibbs-dots/gitconfig /etc/skel/.gitconfig
+RUN ln -s .shanegibbs-dots/gitignore /etc/skel/.gitignore
 
 RUN ln -s /workstation/ssh /etc/skel/.ssh
 RUN ln -s /workstation/aws /etc/skel/.aws
