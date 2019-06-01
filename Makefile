@@ -22,6 +22,12 @@ run:
 		-v $(HOME)/local:/workstation/local \
 		$(IMAGE)
 
+attach:
+	tmux -S ~/workstation/tmux.socket new -A -t workstation -s workstation
+
+attach2:
+	tmux -S ~/workstation/tmux.socket new -A -t workstation -s workstation2
+
 run-simple:
 	docker run --rm -it --name workstation --tmpfs /run --net=host --pid=host \
 		workstation

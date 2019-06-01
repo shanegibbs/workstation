@@ -7,7 +7,7 @@ RUN pacman --noconfirm --needed -S base-devel sudo git
 RUN sudo pacman --noconfirm --needed -S glibc grub parted hwinfo time htop zsh vim \
 	tmux openssh the_silver_searcher binutils zsh python3 python-virtualenv man \
 	termite-terminfo bind-tools jq rsync packer inetutils iputils openbsd-netcat \
-	net-tools cdrtools rxvt-unicode-terminfo psmisc ansible
+	net-tools cdrtools rxvt-unicode-terminfo psmisc ansible vault
 RUN sudo pacman --noconfirm --needed -S rust
 RUN sudo pacman --noconfirm --needed -S go
 RUN sudo pacman --noconfirm --needed -S docker docker-compose
