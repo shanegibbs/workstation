@@ -18,13 +18,10 @@ groupdel docker
 groupadd -g "$(stat -c '%g' /var/run/docker.sock)" docker
 usermod -aG docker "$NEW_USERNAME"
 
-#cp "/home/$NEW_USERNAME/.shanegibbs-dots/tmux.conf" /workstation/
-
-for d in ssh aws config kube gnupg
+for d in $(ls /workstation/dots)
 do
-	P="/workstation/$d"
-	mkdir -p "$P"
-	chown "$NEW_UID:$NEW_GID" "$P"
+	P="/workstation/dots/$d"
+	ln -s "$P" "/home/$NEW_USERNAME/.$d"
 done
 
 for d in dev local
@@ -36,7 +33,7 @@ do
 	fi
 done
 
-sudo -u "$NEW_USERNAME" tmux -S /workstation/tmux.socket new -t workstation -s workstation -d
+sudo -u "$NEW_USERNAME" bash -c "ssh-agent -a /home/$NEW_USERNAME/.ssh-agent.socket & exec tmux -S /workstation/tmux.socket new -t workstation -s workstation -d"
 
 echo tmux running
 sleep infinity

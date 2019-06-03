@@ -23,6 +23,7 @@ WORKDIR /home/yay
 RUN git clone https://aur.archlinux.org/yay.git && cd yay && makepkg --noconfirm --needed -sir && cd .. && rm -rf yay .cache
 RUN yay --noconfirm --needed -S google-cloud-sdk && rm -rf .cache
 RUN yay --noconfirm --needed -S gotop-bin && rm -rf .cache
+RUN yay --noconfirm --needed -S aws-vault && rm -rf .cache
 #RUN yay --noconfirm --needed -S dive && rm -rf .cache
 USER root
 RUN userdel -rf yay && rm /etc/sudoers.d/yay && rm -rf /home/yay
@@ -37,13 +38,7 @@ RUN cd /usr/local/bin && curl -L "$(curl -s https://api.github.com/repos/helm/he
 
 COPY ssh_config /etc/ssh/ssh_config
 
-#RUN useradd -m -s /usr/sbin/zsh -U -G users,audio,input,kvm,optical,storage,video,systemd-journal sgibbs
-#RUN echo "sgibbs ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/user
-#WORKDIR /home/sgibbs
-#USER sgibbs
-
 COPY dots /etc/skel/.shanegibbs-dots
-#RUN sudo chown sgibbs:sgibbs -R .shanegibbs-dots && ./.shanegibbs-dots/setup.sh
 
 RUN zsh -c 'git clone --recursive https://github.com/sorin-ionescu/prezto.git "/etc/skel/.zprezto" && \
 	setopt EXTENDED_GLOB && \
@@ -59,15 +54,8 @@ RUN ln -s .shanegibbs-dots/vim /etc/skel/.vim
 RUN ln -s .shanegibbs-dots/gitconfig /etc/skel/.gitconfig
 RUN ln -s .shanegibbs-dots/gitignore /etc/skel/.gitignore
 
-RUN ln -s /workstation/ssh /etc/skel/.ssh
-RUN ln -s /workstation/aws /etc/skel/.aws
-RUN ln -s /workstation/config /etc/skel/.config
-RUN ln -s /workstation/kube /etc/skel/.kube
-RUN ln -s /workstation/gnupg /etc/skel/.gnupg
-
 RUN ln -s /workstation/projects /etc/skel/projects
 
-#USER root
 RUN curl -L https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 >dumb-init && chmod +x dumb-init && mv dumb-init /usr/local/bin
 ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
 COPY entry.sh /
