@@ -2,10 +2,13 @@ IMAGE=shanegibbs/workstation
 USER=$(shell whoami)
 
 build:
-	docker build $(BUILD_ARGS) -t workstation .
+	docker build $(BUILD_ARGS) -t shanegibbs/workstation .
 
 build-no-cache:
 	$(MAKE) build BUILD_ARGS=--no-cache
+
+build-static:
+	docker build -f Dockerfile.static $(BUILD_ARGS) -t workstation:static .
 
 run:
 	mkdir -p "$(HOME)/workstation"
@@ -22,6 +25,16 @@ run:
 		-v $(HOME)/local:/workstation/local \
 		$(IMAGE)
 
+run-isolated:
+	docker run --name workstation -t --rm --hostname workstation $(ARGS) \
+		--net=host \
+		--privileged \
+		--tmpfs /run \
+		$(IMAGE)
+
+exec:
+	docker exec -it workstation tmux -S /workstation/tmux.socket attach
+
 attach:
 	tmux -S ~/workstation/tmux.socket new -A -t workstation -s workstation
 
@@ -30,7 +43,13 @@ attach2:
 
 run-simple:
 	docker run --rm -it --name workstation --tmpfs /run --net=host --pid=host \
-		workstation
+		$(IMAGE)
+
+shell:
+	docker run --rm -it --name workstation $(IMAGE) bash -l
 
 stop:
-	docker stop workstation
+	docker -f rm workstation
+
+update-helm:
+	# todo

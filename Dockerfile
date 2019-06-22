@@ -4,10 +4,12 @@ RUN sed -i 's/#Color/Color/' /etc/pacman.conf
 RUN pacman --noconfirm -Sy
 RUN pacman --noconfirm --needed -S base-devel sudo git
 
-RUN sudo pacman --noconfirm --needed -S glibc grub parted hwinfo time htop zsh vim \
-	tmux openssh the_silver_searcher binutils zsh python3 python-virtualenv man \
-	termite-terminfo bind-tools jq rsync packer inetutils iputils openbsd-netcat \
-	net-tools cdrtools rxvt-unicode-terminfo psmisc ansible vault
+RUN sudo pacman --noconfirm --needed -S base base-devel glibc grub parted hwinfo \
+  time htop zsh vim tmux openssh the_silver_searcher binutils zsh python3 \
+  python-virtualenv man termite-terminfo bind-tools jq rsync packer inetutils \
+  iputils openbsd-netcat net-tools cdrtools rxvt-unicode-terminfo psmisc ansible \
+  vault docker iptables
+
 RUN sudo pacman --noconfirm --needed -S rust
 RUN sudo pacman --noconfirm --needed -S go
 RUN sudo pacman --noconfirm --needed -S docker docker-compose
@@ -28,7 +30,8 @@ RUN yay --noconfirm --needed -S aws-vault && rm -rf .cache
 USER root
 RUN userdel -rf yay && rm /etc/sudoers.d/yay && rm -rf /home/yay
 
-RUN cd /usr/local/bin && curl -L "$(curl -s https://api.github.com/repos/helm/helm/releases/latest |jq -r .body |egrep -o "https:[^)]+linux-arm64.tar.gz" |head -n 1)" |tar -xz
+#RUN cd /usr/local/bin && curl -L "$(curl -s https://api.github.com/repos/helm/helm/releases/latest |jq -r .body |egrep -o "https:[^)]+linux-arm64.tar.gz" |head -n 1)" |tar -xz
+RUN cd /usr/local/bin && curl -L https://storage.googleapis.com/workspace-artifacts/tars/helm-v2.14.1-linux-amd64.tar.gz |tar -xz
 
 #RUN pacman --noconfirm -S xorg-xev rxvt-unicode termite dmenu i3status code qpdfview
 #RUN pacman --noconfirm -S ttf-font-awesome ttf-ubuntu-font-family ttf-dejavu ttf-liberation noto-fonts noto-fonts-emoji noto-fonts-extra
@@ -56,7 +59,14 @@ RUN ln -s .shanegibbs-dots/gitignore /etc/skel/.gitignore
 
 RUN ln -s /workstation/projects /etc/skel/projects
 
-RUN curl -L https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 >dumb-init && chmod +x dumb-init && mv dumb-init /usr/local/bin
-ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
+#RUN curl -L https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 >dumb-init && chmod +x dumb-init && mv dumb-init /usr/local/bin
+#ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
+WORKDIR /home
+
+COPY workstation.target /etc/systemd/system
+RUN systemctl set-default workstation.target
+
+STOPSIGNAL SIGRTMIN+3
+ENV container=docker
 COPY entry.sh /
 CMD /entry.sh
