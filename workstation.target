@@ -1,5 +1,5 @@
 [Unit]
 Description=Workstation
 Requires=
-Wants=
+Wants=sshd.service
 After=

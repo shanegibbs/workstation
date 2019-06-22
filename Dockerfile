@@ -1,10 +1,10 @@
 FROM archlinux/base
 
 RUN sed -i 's/#Color/Color/' /etc/pacman.conf
-RUN pacman --noconfirm -Sy
-RUN pacman --noconfirm --needed -S base-devel sudo git
+RUN pacman --noconfirm -Syu
+RUN pacman --noconfirm --needed -S base base-devel sudo git
 
-RUN sudo pacman --noconfirm --needed -S base base-devel glibc grub parted hwinfo \
+RUN sudo pacman --noconfirm --needed -S glibc grub parted hwinfo \
   time htop zsh vim tmux openssh the_silver_searcher binutils zsh python3 \
   python-virtualenv man termite-terminfo bind-tools jq rsync packer inetutils \
   iputils openbsd-netcat net-tools cdrtools rxvt-unicode-terminfo psmisc ansible \
@@ -65,6 +65,9 @@ WORKDIR /home
 
 COPY workstation.target /etc/systemd/system
 RUN systemctl set-default workstation.target
+RUN systemctl disable systemd-networkd
+
+# RUN mkdir /etc/systemd/system/systemd-networkd-wait-online.service.d && echo -e "[Service]\nExecStart=\nExecStart=-/usr/sbin/true" > /etc/systemd/system/systemd-networkd-wait-online.service.d/override.conf
 
 STOPSIGNAL SIGRTMIN+3
 ENV container=docker

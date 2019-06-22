@@ -7,6 +7,9 @@ if [ -e /var/run/docker.sock ]
 then
   groupdel docker
   groupadd -g "$(stat -c '%g' /var/run/docker.sock)" docker
+else
+  mkdir /etc/systemd/system/workstation.target.wants
+  ln -s /usr/lib/systemd/system/docker.service /etc/systemd/system/workstation.target.wants
 fi
 
 NEW_UID="${NEW_UID:-1500}"
