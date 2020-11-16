@@ -35,12 +35,16 @@ run:
 	mkdir -p "$(HOME)/workstation"
 	echo $(USER) > "$(HOME)/workstation/username"
 	docker run $(DOCKER_ARGS) \
-		-v /var/run/docker.sock:/var/run/docker.sock \
-		-v $(HOME)/workstation:/workstation \
-		-v $(HOME)/projects:/workstation/projects \
-		-v $(HOME)/dev:/workstation/dev \
-		-v $(HOME)/local:/workstation/local \
+		--shm-size 2g \
 		$(IMAGE)
+		# -v /var/run/docker.sock:/var/run/docker.sock \
+		# -v $(HOME)/workstation:/workstation \
+		# -v $(HOME)/projects:/workstation/projects \
+		# -v $(HOME)/dev:/workstation/dev \
+		# -v $(HOME)/local:/workstation/local \
+
+vnc:
+	VNC_PASSWORD=workstation vncviewer 172.17.0.2:1 
 
 run-isolated:
 	docker run $(DIND_DOCKER_ARGS) --net=host $(IMAGE)

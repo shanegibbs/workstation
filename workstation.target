@@ -1,5 +1,5 @@
 [Unit]
 Description=Workstation
 Requires=
-Wants=sshd.service
+Wants=sshd.service vncserver@:1.service
 After=
