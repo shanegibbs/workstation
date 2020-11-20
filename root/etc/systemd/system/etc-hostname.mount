@@ -1,0 +1,7 @@
+[Unit]
+Description=tmp mount
+DefaultDependencies=no
+
+[Mount]
+What=tmpfs
+Where=/etc/hostname

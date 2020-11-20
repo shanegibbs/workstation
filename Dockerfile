@@ -77,9 +77,9 @@ WORKDIR /home
 
 COPY workstation.target /etc/systemd/system
 RUN systemctl set-default workstation.target
-RUN systemctl enable dbus
 RUN systemctl mask \
 	swap.target \
+	tmp.mount \
 	systemd-networkd \
 	systemd-firstboot.service \
 	systemd-timesyncd.service
@@ -88,5 +88,7 @@ STOPSIGNAL SIGRTMIN+3
 ENV container=docker
 COPY entry.sh /
 CMD /entry.sh
+
+EXPOSE 5901/tcp
 
 ADD root /

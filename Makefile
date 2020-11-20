@@ -1,13 +1,14 @@
 IMAGE=shanegibbs/workstation
 USER=$(shell whoami)
 DOCKER_ARGS=--name workstation -t --rm --hostname workstation \
-	    --cap-add NET_ADMIN \
+	    --tmpfs /run \
+	    --tmpfs /tmp \
+		-v /dev/urandom:/dev/random:ro \
+	    -v /sys/fs/cgroup:/sys/fs/cgroup:ro
+DOCKER_SYS_ARGS=--cap-add NET_ADMIN \
 	    --cap-add SYS_CHROOT \
 	    --cap-add SYS_PTRACE \
-	    --cap-add SYS_RESOURCE \
-	    -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
-	    --tmpfs /run \
-	    --tmpfs /tmp
+	    --cap-add SYS_RESOURCE
 DIND_DOCKER_ARGS=--name workstation -t --rm --hostname workstation \
 		 --privileged \
 		 --tmpfs /run \
@@ -32,10 +33,10 @@ build-static:
 	docker build -f Dockerfile.static $(BUILD_ARGS) -t workstation:static .
 
 run:
-	mkdir -p "$(HOME)/workstation"
-	echo $(USER) > "$(HOME)/workstation/username"
+	#mkdir -p "$(HOME)/workstation"
+	#echo $(USER) > "$(HOME)/workstation/username"
 	docker run $(DOCKER_ARGS) \
-		--shm-size 2g \
+		-P --shm-size 2g \
 		$(IMAGE)
 		# -v /var/run/docker.sock:/var/run/docker.sock \
 		# -v $(HOME)/workstation:/workstation \
@@ -53,7 +54,8 @@ exec:
 	docker exec -it workstation tmux -S /workstation/tmux.socket attach
 
 attach:
-	tmux -S ~/workstation/tmux.socket new -A -t workstation -s workstation
+	docker exec -it workstation bash
+	# tmux -S ~/workstation/tmux.socket new -A -t workstation -s workstation
 
 attach2:
 	tmux -S ~/workstation/tmux.socket new -A -t workstation -s workstation2
@@ -70,3 +72,6 @@ stop:
 
 update-helm:
 	# todo
+
+submodules:
+	git submodule update --init --recursive
