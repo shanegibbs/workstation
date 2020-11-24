@@ -1,6 +1,6 @@
 IMAGE=shanegibbs/workstation
 USER=$(shell whoami)
-DOCKER_ARGS=--name workstation -t --rm --hostname workstation \
+DOCKER_ARGS=--name workstation -it --rm --hostname workstation \
 	    --tmpfs /run \
 	    --tmpfs /tmp \
 		-v /dev/urandom:/dev/random:ro \

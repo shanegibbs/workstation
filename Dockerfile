@@ -1,6 +1,6 @@
 FROM archlinux/base
 
-ADD mirrorlist.pacman /etc/pacman.d/mirrorlist
+ADD root/etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist
 RUN sed -i 's/#Color/Color/' /etc/pacman.conf
 RUN pacman --noconfirm -Syu
 RUN pacman --noconfirm --needed -S base base-devel sudo git
@@ -75,8 +75,7 @@ RUN ln -s .shanegibbs-dots/gitignore /etc/skel/.gitignore
 #ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
 WORKDIR /home
 
-COPY workstation.target /etc/systemd/system
-RUN systemctl set-default workstation.target
+# RUN systemctl set-default workstation.target
 RUN systemctl mask \
 	swap.target \
 	tmp.mount \
